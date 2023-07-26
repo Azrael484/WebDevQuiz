@@ -1,0 +1,74 @@
+*{
+    box-sizing: border-box;
+}
+:root{
+    font-size:10px;
+    line-height: 4rem;
+    background:darkslategrey;
+}
+body{
+    display: flex;
+    flex-direction:column;
+    color:blanchedalmond;
+    width:100%;
+    height:100vh;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    font-size:2rem;
+}
+header nav {
+    margin: 20px;
+}
+header nav a:hover{
+    text-decoration: underline;
+}
+header ul li{
+    margin:-2.5px 20px 20px 20px;
+}
+header ul li span {
+font: bolder 2rem monospaceS;
+
+}
+section{
+    margin: auto;
+    height:80vh;
+    text-align: center;
+    width:60%;
+}
+section h1{
+    font-size:4rem;
+}
+section p{
+    font-size: 3rem;
+}
+
+section ul {
+    list-style: none;
+}
+
+#eval-ans{
+    margin-top: 10px;
+    background-color: white;
+    width: 100%;
+}
+
+section ul button{
+    width: 100%;
+    background: linear-gradient(gray 0%, darkgray 100%);
+    min-height: 50px;
+    border-radius: 50px;
+    outline: ridge 5px blanchedalmond;
+    border-width: 2.5px;
+    font-size: 3rem;
+    cursor: pointer;
+    margin-bottom:20px;
+}
+
+section ul button:hover{
+    box-shadow: 0 0 5px 10px black;
+}
