@@ -4,7 +4,7 @@
     box-sizing: border-box; 
 }
 
-/*Sets properties that serve as point of reference for other elements whithin the page. Includes CSS variables*/
+/*Sets properties that serve as point of reference for other elements whithin the page. Includes CSS variableslsl*/
 
 :root{
     font-size:10px;
