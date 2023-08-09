@@ -8,30 +8,39 @@ client-side storage. The application was designed to be responsive enough so tha
 ## Usage
 
 The application is currently deployed in GitHub pages at the following URL: https://jguemarez.github.io/WebDevQuiz/.
+The following screenshots where taken from a rendering of the page using Google Chrome Version 115.0.5790.171 (Official Build) (64-bit).
 
 When the page loads, the user will be greeted with the following screen message:
 
-![Starting page of the Web Quiz](Web-quiz1.png)
+![Starting page of the Web Quiz](assets/images/webQuiz1.png)
 
 Pressing the "Start Quiz" button will lead the user to the first question and some instructions on the bottom of the page:
 
-![First question of the Web Quiz](Web-quiz2.png)
+![First question of the Web Quiz](assets/images/webQuiz2.png)
+
 Note the timer on the upper right corner. It starts at 50, denoting the 50 seconds initially allotted to complete the quiz.
 
 Depending on whether the answer selected by pressing the button corresponding to "a","b","c", or "d" is wrong, the user will be greeted by one of the following messages and automatically passed to the next question:
-![Message indicating correct answer at bottom](Web-quiz3.png)
+
+![Message indicating correct answer at bottom](assets/images/webQuiz3.png)
+
 Message displayed when the answer is correct. In this case the countdown from 50 to 0 decrements by 1 each second.
-![Message indicating wrong answer plus the actual answer at bottom](Web-quiz6.png)
+
+![Message indicating wrong answer plus the actual answer at bottom](assets/images/webQuiz4.png)
+
 Message displayed when the answer is wrong. In this case, 10 seconds are substracted from the remaining time and no points awarded.
 
 If the user answers all the questions before time runs up, then the counter will be stopped, and the user will be shown the final score. Also an input field will require the user to enter his/her initials in order to save the achieved score and the time it took (minus 10 * (number of wrong answers)) to answer it.
-![Screen when user ends the quiz in time](Web-quiz7.png)
+
+![Screen when user ends the quiz in time](assets/images/webQuiz5.png)
 
 If, on the other hand, the user runs out of time, then the following screen will appear, showing the final score and prompting to enter initials:
-![Screen when user runs out of time](Web-quiz4.png)
+
+![Screen when user runs out of time](assets/images/webQuiz6.png)
 
 Either way, once the initials are entered, the user will be shown a list of the highest scores up to that point. Underneath it, there will be two buttons. The one on the right will reset the quiz if clicked, while the second one will delete items from the list.
-![Final screen showing the scores](Web-quiz5.png)
+
+![Final screen showing the scores](assets/images/webQuiz7.png)
 
 ## Authorship
 

@@ -1,6 +1,8 @@
 
 var displayTime = document.getElementById("timer"); //Selects the element where the remaining time will be displayed.
 
+var timeLeft;
+
 var quizScore = 0; //Sets the quiz score to zero initially. Points will be added as the user answers questions right.
 
 var choices = ["a", "b","c","d"]; // Possible choices for the answers of each of the five questions in the quiz.
@@ -19,7 +21,84 @@ instructions.textContent = "Click on the button below to start a web-development
 
 var buttonList = document.getElementById("buttons"); //The buttons that will allow the user to enter answers will be appended to this list.
 
-var startButton = document.getElementById("start"); //Pressing this button will be the event that fires the application
+var savedScoresBtn = document.getElementById("high-scores");
+
+savedScoresBtn.addEventListener("click", viewHighScores);
+
+function viewHighScores(){
+
+    titleOrQuestion.textContent = "High Scores";//Setting the title of this section
+    titleOrQuestion.style["color"]="lightblue";
+  
+    var storedStats = JSON.parse(localStorage.getItem("Stats")); //Parsing the item "Stats" stored in the localStorage object in order to retrieve some data that will be displayed onscreen. The result is an array whose elements are arrays holding the stats (initials, score, and completion time) of various users.
+
+    console.log(storedStats);
+
+    if(!storedStats){
+
+        instructions.textContent = "Regrettably, there are no scores stored so far. Click below to try the quiz for yourself."
+
+        return;
+
+    }
+
+    
+    startButton.style["display"] = "none";
+
+
+    instructions.textContent = "These are the highest quiz scores so far:";//Description of the data to be found on the list
+
+    var highScoresList = document.createElement("ol"); //Creating an ordered list to display scores and appending it
+    mainSection.appendChild(highScoresList);
+
+    for(let i=0; i < storedStats.length; i++){ //Generating the necessary elements in order to print the data(the items of the ordered list) onscreen.
+
+    let score = document.createElement("li");
+     
+    score.style["font-size"]=["3rem"];//Dynamically changing some CSS properties of the <li> element
+    score.style["color"]=["lightblue"];
+
+    score.textContent = storedStats[i].initials + "  scored  " + storedStats[i].score + "  points in  " + storedStats[i].timing + "  seconds";//Updating the inner HTML of the <li> element
+    
+    highScoresList.appendChild(score);
+
+    }
+
+    var goBackBtn = document.createElement("button"); //Refreshes the page to start a new quiz: create, append, and stylize
+    highScoresList.appendChild(goBackBtn);
+    goBackBtn.setAttribute("id", "goBack")
+    goBackBtn.textContent = "Back to Quiz";
+
+    var clearScoresBtn = document.createElement("button");//Clears the list in High Scores: create, append, and stylize
+    highScoresList.appendChild(clearScoresBtn);
+    clearScoresBtn.setAttribute("id", "clear");
+    clearScoresBtn.textContent = "Clear the List";
+
+    //Adding event listeners to the buttons so that they can perform the desired functionality.
+
+    goBackBtn.addEventListener("click", ()=>{ 
+        location.reload();
+    });
+
+    clearScoresBtn.addEventListener("click", ()=>{
+        var scores =  highScoresList.children; //Using the children property of the list object in order to get an array whose elements are all of the elements of the list + the attached buttons.
+
+        for(let i=0; i<scores.length - 2; i++){//This loop clears the content of each of the scores from the screen but leaves the 2 buttons intact.
+
+            scores[i].textContent = "";
+        }
+
+        localStorage.clear(); //This will delete the stats info that is already in persistent storage in order to start the rankings anew
+
+    });
+}
+
+var startButton = document.createElement("button"); //Creating the start button and adding it its text content
+startButton.textContent = "Start Quiz";
+
+buttonList.append(startButton); //Attaching the start button node to the <ul> node in the DOM.
+
+//var startButton = document.getElementById("start"); //Pressing this button will be the event that fires the application
 
 startButton.addEventListener("click", function(event){ //The firing event will be a single-click on the start button. Inmmediately, the event-handler will be initialized.
 
@@ -60,16 +139,16 @@ var remainingTime = displayTime.children[0]; //Selects the <span> element where 
         listItem[i].appendChild(Button[i]);
     };
 
+
     function init(){ //This function will be initialized when the event happens on the start button target, starting the quiz.
     
         nextQuestion(0); //Passing the argument "0" to the hoisted nextQuestion function.
+        timeLeft = 50;  //The user will be granted 50 seconds to answer the quiz.
+        remainingTime.textContent = timeLeft; //From here on, this line of code will update the time counter..
        
     }
 
     init(); //Invoking the init function.
-
-    var timeLeft = 50;  //The user will be granted 50 seconds to answer the quiz.
-    remainingTime.textContent = timeLeft; //From here on, this line of code will update the time counter..
 
     var quizAllottedTime = setInterval(function (){ //Setting the time interval, including rules to update the counter based on certain Boolean expressions.
             if(!isAnswerWrong && timeLeft>0){
@@ -200,17 +279,17 @@ var remainingTime = displayTime.children[0]; //Selects the <span> element where 
         }
     }  
     
-    var endForm = document.createElement("form"); //Creates the form element (node) that the user will use to enter the necessary data to store the achieved score.
+    var timeSpentAnsweringQuiz; //Stores what its name says.
 
     function endQuiz(){ //This function is called upon either when all questions have been answered or the user ran out of time.
 
         clearInterval(quizAllottedTime);//Stops the counter, clearing the interval (stops the execution of the associated function.)
+
+        timeSpentAnsweringQuiz = 50-timeLeft; 
         
         for(let i=0; i<4; i++){
             Button[i].style["display"]= "none";//This loop hides the buttons previously used to pick an answer.
         }
-
-        var timeSpentAnsweringQuiz = 50-timeLeft; //Stores what its name says.
 
         instructions.textContent = "Hope you enjoyed the quiz. Your final score is " + quizScore +" and the time elapsed was " + timeSpentAnsweringQuiz +"."; 
 
@@ -227,6 +306,14 @@ var remainingTime = displayTime.children[0]; //Selects the <span> element where 
         evalAns.style["display"] = "none";//Hidding the paragraph element with the answer evaluation, so that its not rendered.
         };
 
+        storeStats();
+    }
+
+    var endForm = document.createElement("form"); //Creates the form element (node) that the user will use to enter the necessary data to store the achieved score.
+    var Stats =[];
+
+    function storeStats(){
+
         mainSection.appendChild(endForm);//Appending the form where the user will enter his/her initials
         
         var enterInitials = document.createElement("input"); //Generating an input field with the chosen attributes and appending it to the form
@@ -241,77 +328,46 @@ var remainingTime = displayTime.children[0]; //Selects the <span> element where 
         submitButton.setAttribute("type", "submit");
         submitButton.textContent = "Submit to see the rankings!";
         endForm.appendChild(submitButton);
-
-       var users = [];//This variable will temporarily store info about the stats pertaining to different users.
         
-        endForm.addEventListener('submit', function (event){ //Adding an event listener to the form
+    
 
-            event.preventDefault(); // Preventing the data entered in the text field from being deleted when the submit button is pressed.
+        endForm.addEventListener('submit', function (event){ //Adding an event listener to the form. 
 
-            var lastUserStats = [ enterInitials.value.trim() , quizScore, timeSpentAnsweringQuiz]; //Collecting the data from the last user
-            users.push(lastUserStats); //Adding the data from the last user to the "users" array
-            localStorage.setItem("users", JSON.stringify(users)); //Storing the data inside "users" array on client-side storage using JSON
-            console.log(localStorage);
-            viewHighScores();  //Invoking the viewHighScores function, letting the user view a list with at least one score(his/her own)
+        event.preventDefault(); // Preventing the data entered in the text field from being deleted when the submit button is pressed.
 
-        });
-    }
+        //Collecting the data from the last user and storing it into an object.
+        var lastUserStats = { 
+            initials : enterInitials.value.trim(), 
+            score: quizScore, 
+            timing: timeSpentAnsweringQuiz
+        }; 
 
+        var storedStats = JSON.parse(localStorage.getItem("Stats")); //Retrieveing the "Stats" JSON string from localStorage and assigning it to the "storedStats" variable.
 
-    function viewHighScores(){
+        // Supposing there is a non-null "storedStats" object saved in localStorage (in the form of a JSON string), we assign it to the "Stats" array 
 
+        if (storedStats) {
+
+          Stats = storedStats;
+
+        }
+
+        Stats.push(lastUserStats); //Add the stats corresponding to the last user to the "Stats" array
+
+        localStorage.setItem("Stats", JSON.stringify(Stats)); //Storing the data inside the newly modified "Stats" array on client-side storage using JSON
+        console.log(localStorage);
+
+        
         evalAns.style["display"] = "none"; //Stopping no longer relevant elements from being rendered again, cluttering the page
 
         endForm.style["display"] = "none";
 
-        titleOrQuestion.textContent = "High Scores";//Setting the title of this section
-        titleOrQuestion.style["color"]="lightblue";
-      
-        instructions.textContent = "These are the highest quiz scores so far:";//Description of the data to be found on the list
+        viewHighScores();  //Invoking the viewHighScores function, letting the user view a list with at least one score(his/her own)
 
-        var highScoresList = document.createElement("ol"); //Creating an ordered list to display scores and appending it
-        mainSection.appendChild(highScoresList);
-
-        var parsedScores = JSON.parse(localStorage.getItem("users")); //Parsing the item "users" stored in the localStorage object in order to retrieve some data that will be displayed onscreen. The result is an array whose elements are arrays holding the stats (initials, score, and completion time) of various users.
-
-        console.log(parsedScores);
-
-        for(let i=0; i < parsedScores.length; i++){ //Generating the necessary elements in order to print the data(the items of the ordered list) onscreen.
-
-        let score = document.createElement("li");
-         
-        score.style["font-size"]=["3rem"];
-        score.style["color"]=["lightblue"];
-        score.textContent = parsedScores[i][0]+ "  scored  " + parsedScores[i][1] + "  points in  " + parsedScores[i][2] + "  seconds";
-        highScoresList.appendChild(score);
-        }
-
-        var goBackBtn = document.createElement("button"); //Refreshes the page to start a new quiz: create, append, and stylize
-        highScoresList.appendChild(goBackBtn);
-        goBackBtn.setAttribute("id", "goBack")
-        goBackBtn.textContent = "Back to Quiz";
-        var clearScoresBtn = document.createElement("button");//Clears the list in High Scores: create, append, and stylize
-        highScoresList.appendChild(clearScoresBtn);
-        clearScoresBtn.setAttribute("id", "clear");
-        clearScoresBtn.textContent = "Clear the List";
-
-        //Adding event listeners to the buttons so that they can perform the desired functionality.
-
-        goBackBtn.addEventListener("click", ()=>{ 
-            location.reload();
         });
-
-        clearScoresBtn.addEventListener("click", ()=>{
-            var scores =  highScoresList.children; //Using the children property of the list object in order to get an array whose elements are all of the elements of the list + the attached buttons.
-
-            for(let i=0; i<scores.length -2; i++){//This loop clears the content of each of the list items but leaves the 2 buttons intact.
-
-                scores[i].textContent = "";
-            }
-        });
-
-}
+    }
 
 });
+
 
 
